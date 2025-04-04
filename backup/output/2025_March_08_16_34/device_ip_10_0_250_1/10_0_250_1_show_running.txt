@@ -1,0 +1,571 @@
+Timestamp: 2025-03-08 16:34:05
+Command: show running
+Output:
+Building configuration...
+
+Current configuration : 12090 bytes
+!
+! Last configuration change at 17:12:05 UTC Wed Feb 26 2025 by kai
+!
+version 16.12
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service call-home
+no platform punt-keepalive disable-kernel-core
+platform management port rate-limt-enabled
+!
+hostname Core
+!
+!
+vrf definition Mgmt-vrf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+switch 1 provision ws-c3850-12x48u
+!
+!
+!
+!
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+ip routing
+!
+!
+!
+!
+!
+ip name-server 192.168.252.5 192.168.252.8 1.1.1.1
+ip domain name home.local
+ip dhcp relay information trust-all
+ip dhcp excluded-address 10.0.252.1 10.0.252.150
+ip dhcp excluded-address 10.0.252.200 10.0.252.254
+ip dhcp excluded-address 10.0.250.1 10.0.250.10
+ip dhcp excluded-address 10.0.250.100 10.0.250.254
+ip dhcp excluded-address 192.168.1.1 192.168.1.10
+ip dhcp excluded-address 192.168.1.100 192.168.1.254
+ip dhcp excluded-address 192.168.168.1 192.168.168.10
+ip dhcp excluded-address 192.168.168.100 192.168.168.254
+ip dhcp excluded-address 10.0.250.88
+ip dhcp excluded-address 10.0.250.100
+ip dhcp excluded-address 10.0.250.99
+ip dhcp excluded-address 10.0.250.80 10.0.250.90
+ip dhcp excluded-address 10.0.250.100 10.0.250.199
+!
+ip dhcp pool VL252
+ network 10.0.252.0 255.255.255.0
+ default-router 10.0.252.1 
+ domain-name tbs.local
+ dns-server 10.0.250.5 
+!
+!
+!
+ip dhcp snooping vlan 252,666
+no ip dhcp snooping information option
+ip igmp snooping querier
+login on-success log
+!
+!
+!
+!
+!
+!
+device-sensor filter-list dhcp list dhcp_list
+ option name host-name
+ option name requested-address
+ option name parameter-request-list
+ option name class-identifier
+ option name client-identifier
+!
+device-sensor filter-list cdp list cdp_list
+ tlv name device-name
+ tlv name address-type
+ tlv name capabilities-type
+ tlv name platform-type
+!
+device-sensor filter-list lldp list lldp_list
+ tlv name system-name
+ tlv name system-description
+ tlv name system-capabilities
+device-sensor filter-spec dhcp include list dhcp_list
+device-sensor filter-spec lldp include list lldp_list
+device-sensor filter-spec cdp include list cdp_list
+device-sensor notify all-changes
+!
+!
+vtp domain home
+vtp mode transparent
+no device-tracking logging theft
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
+  32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363 
+  6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934 
+  3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305 
+  43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720 
+  526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 
+  82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D 
+  CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520 
+  1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE 
+  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC 
+  7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188 
+  68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7 
+  C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191 
+  C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44 
+  DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201 
+  06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85 
+  4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500 
+  03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905 
+  604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B 
+  D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8 
+  467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C 
+  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B 
+  5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678 
+  80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB 
+  418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0 
+  D697DF7F 28
+  	quit
+!
+!
+license boot level ipservicesk9
+!
+!
+diagnostic bootup level minimal
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 1-4094 priority 24576
+memory free low-watermark processor 79468
+!
+username kai privilege 15 secret 9 $14$3Sr1$vdhxLdIfgkTtlk$ZCIVrS5WwKKEeyw9NqP3xd82CoMoymUt09Myn5YJVBg
+!
+redundancy
+ mode sso
+!
+!
+!
+!
+!
+transceiver type all
+ monitoring
+!
+vlan 2
+ name test-mgmt
+!
+vlan 9 
+!
+vlan 10
+ name PROD
+!
+vlan 25 
+!
+vlan 100
+ name Edge1
+!
+vlan 101
+ name Lab101
+!
+vlan 200
+ name Guest
+!
+vlan 210
+ name NAS-NET
+!
+vlan 248
+ name Acc
+!
+vlan 249
+ name DMZ
+!
+vlan 250
+ name management
+!
+vlan 251
+ name data
+!
+vlan 252
+ name Server
+!
+vlan 254
+ name VL254
+!
+vlan 255
+ name ASA
+!
+vlan 300
+ name ATT-RTR-LAN
+!
+vlan 600
+ name guest
+!
+vlan 666
+ name Internet
+!
+vlan 667
+ name Transit
+!
+vlan 668,861 
+!
+vlan 910
+ name VM-Network
+!
+vlan 920
+ name FLAT
+!
+vlan 930
+ name FLAT1
+!
+vlan 940
+ name SNAT
+!
+vlan 950
+ name INT
+!
+vlan 999
+ name pa-mgmt
+!
+vlan 1901
+ name VHI-CORP
+!
+vlan 1902
+ name KRO-CORP
+!
+vlan 1990
+ name Guest-Wifi
+!
+vlan 1991
+ name VIP-Wifi
+!
+vlan 1992
+ name BoardRm-Wifi
+!
+vlan 1993
+ name Gadget-Wifi
+!
+vlan 1998
+ name test1998
+!
+vlan 2001
+ name lab-172.16.1
+!
+vlan 2002
+ name lab-172.16.2
+!
+vlan 2003
+ name test
+!
+vlan 3100
+ name VHI
+!
+vlan 3200
+ name KRO
+lldp run
+!
+!
+class-map match-any system-cpp-police-topology-control
+  description Topology control
+class-map match-any system-cpp-police-sw-forward
+  description Sw forwarding, L2 LVX data, LOGGING
+class-map match-any system-cpp-default
+  description EWLC control, EWLC data, Inter FED 
+class-map match-any system-cpp-police-sys-data
+  description Learning cache ovfl, High Rate App, Exception, EGR Exception, NFL SAMPLED DATA, RPF Failed
+class-map match-any system-cpp-police-punt-webauth
+  description Punt Webauth
+class-map match-any system-cpp-police-l2lvx-control
+  description L2 LVX control packets
+class-map match-any system-cpp-police-forus
+  description Forus Address resolution and Forus traffic
+class-map match-any system-cpp-police-multicast-end-station
+  description MCAST END STATION
+class-map match-any system-cpp-police-multicast
+  description Transit Traffic and MCAST Data
+class-map match-any system-cpp-police-l2-control
+  description L2 control
+class-map match-any system-cpp-police-dot1x-auth
+  description DOT1X Auth
+class-map match-any system-cpp-police-data
+  description ICMP redirect, ICMP_GEN and BROADCAST
+class-map match-any system-cpp-police-stackwise-virt-control
+  description Stackwise Virtual
+class-map match-any non-client-nrt-class
+class-map match-any system-cpp-police-routing-control
+  description Routing control and Low Latency
+class-map match-any system-cpp-police-protocol-snooping
+  description Protocol snooping
+class-map match-any system-cpp-police-dhcp-snooping
+  description DHCP snooping
+class-map match-any system-cpp-police-system-critical
+  description System Critical and Gold Pkt
+!
+policy-map system-cpp-policy
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ vrf forwarding Mgmt-vrf
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet1/0/1
+ description Liftmaster
+ switchport access vlan 250
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet1/0/2
+!
+interface GigabitEthernet1/0/3
+ description Meraki: I
+ switchport access vlan 100
+ switchport mode access
+ spanning-tree portfast
+!
+interface GigabitEthernet1/0/4
+ description Meraki: VHI
+ switchport trunk native vlan 3100
+ switchport trunk allowed vlan 3100
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/5
+ description Meraki KRO
+ switchport trunk native vlan 3200
+ switchport trunk allowed vlan 3200
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/0/25
+!
+interface GigabitEthernet1/0/26
+!
+interface GigabitEthernet1/0/27
+!
+interface GigabitEthernet1/0/28
+!
+interface GigabitEthernet1/0/29
+!
+interface GigabitEthernet1/0/30
+!
+interface GigabitEthernet1/0/31
+!
+interface GigabitEthernet1/0/32
+!
+interface GigabitEthernet1/0/33
+!
+interface GigabitEthernet1/0/34
+!
+interface GigabitEthernet1/0/35
+!
+interface GigabitEthernet1/0/36
+!
+interface TenGigabitEthernet1/0/37
+!
+interface TenGigabitEthernet1/0/38
+!
+interface TenGigabitEthernet1/0/39
+!
+interface TenGigabitEthernet1/0/40
+!
+interface TenGigabitEthernet1/0/41
+!
+interface TenGigabitEthernet1/0/42
+!
+interface TenGigabitEthernet1/0/43
+!
+interface TenGigabitEthernet1/0/44
+!
+interface TenGigabitEthernet1/0/45
+ description AboveChloe/Oli Hallway
+ switchport trunk native vlan 252
+ switchport mode trunk
+ spanning-tree portfast trunk
+!
+interface TenGigabitEthernet1/0/46
+ description Work-Test-AP
+ switchport access vlan 3100
+ switchport mode access
+ shutdown
+ spanning-tree portfast
+!
+interface TenGigabitEthernet1/0/47
+ description GameRoom-Ceiling-AP
+ switchport trunk native vlan 252
+ switchport mode trunk
+!
+interface TenGigabitEthernet1/0/48
+ description MediaCloset
+ switchport mode trunk
+!
+interface GigabitEthernet1/1/1
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface TenGigabitEthernet1/1/1
+!
+interface TenGigabitEthernet1/1/2
+!
+interface TenGigabitEthernet1/1/3
+!
+interface TenGigabitEthernet1/1/4
+!
+interface TenGigabitEthernet1/1/5
+!
+interface TenGigabitEthernet1/1/6
+!
+interface TenGigabitEthernet1/1/7
+!
+interface TenGigabitEthernet1/1/8
+!
+interface FortyGigabitEthernet1/1/1
+!
+interface FortyGigabitEthernet1/1/2
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan100
+ ip address 10.0.0.10 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+!
+interface Vlan210
+ ip address 192.168.100.254 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+!
+interface Vlan250
+ ip address 10.0.250.2 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ standby version 2
+ standby 250 ip 10.0.250.1
+ standby 250 preempt
+!
+interface Vlan251
+ description Wireless
+ ip address 10.0.251.1 255.255.255.0
+!
+interface Vlan252
+ ip address 10.0.252.1 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+ standby version 2
+!
+interface Vlan667
+ description Transit
+ ip address 10.255.255.250 255.255.255.0
+ no ip redirects
+ no ip proxy-arp
+!
+ip default-gateway 10.0.250.1
+ip forward-protocol nd
+no ip http server
+ip http authentication local
+no ip http secure-server
+ip http secure-active-session-modules none
+ip http active-session-modules none
+ip route 0.0.0.0 0.0.0.0 10.0.0.1 name OPNsense
+ip route 0.0.0.0 0.0.0.0 10.255.255.1 250 name FW
+ip route 10.0.253.0 255.255.255.0 10.0.252.250 name EVE-LAB
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+control-plane
+ service-policy input system-cpp-policy
+!
+!
+line con 0
+ privilege level 15
+ login local
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ privilege level 15
+ login local
+ transport input ssh
+line vty 5 15
+ privilege level 15
+ login local
+ transport input ssh
+!
+!
+!
+!
+!
+!
+!
+end

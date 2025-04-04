@@ -1,0 +1,4 @@
+﻿show ip route
+show ip int brief
+show int status
+show running

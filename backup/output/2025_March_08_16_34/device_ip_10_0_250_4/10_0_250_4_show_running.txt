@@ -1,0 +1,194 @@
+Timestamp: 2025-03-08 16:34:13
+Command: show running
+Output:
+Building configuration...
+
+Current configuration : 4087 bytes
+!
+! Last configuration change at 01:19:05 UTC Mon Mar 3 2025
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Desktop
+!
+boot-start-marker
+boot-end-marker
+!
+!
+username kai privilege 15 secret 9 $9$/ayuS5s8fvbBhF$O7M/ND3jRTS4SfcJmkAtDn6wcAXu2TNN8reVUjyY5vs
+no aaa new-model
+switch 1 provision c1000-8p-e-2g-l
+system mtu routing 1500
+!
+!
+vtp domain tbs.local
+vtp mode transparent
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-1005722112
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1005722112
+ revocation-check none
+ rsakeypair TP-self-signed-1005722112
+!
+!
+crypto pki certificate chain TP-self-signed-1005722112
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 31303035 37323231 3132301E 170D3233 30333133 32303239 
+  31305A17 0D333030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 30303537 
+  32323131 3230819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281 
+  8100B7AE A4BC5B1C AD0B19A4 59F6E9AE 082C8593 8A676FD6 DC082CF3 3F591E6A 
+  FF94EDF9 A26EEEC6 0CEBC21B F5CA29E1 8AC9AE5C 00231F84 C168A68E 4E935DF8 
+  6E4545DF 8A35AF8D DF60A090 E10876C1 72B2225A D09A572C 10F76838 6352FC0F 
+  97D870FE 673B3ECD FAA85CB1 D5FBCFA4 6D81E813 FC6B08C1 33FAE075 03B759B9 
+  1C8F0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 14A7A7E1 EF11357E B7C70B08 1863517D AD0782DF 0C301D06 
+  03551D0E 04160414 A7A7E1EF 11357EB7 C70B0818 63517DAD 0782DF0C 300D0609 
+  2A864886 F70D0101 05050003 8181006A 8A6434B4 7A53556B 4A6E6853 CE9A8F2F 
+  F5F96B2B FF040B53 1D4CD155 D6A45413 97A5ECFB 57B31CD8 4EDA6472 9A1704C8 
+  AD851E3C DC81AE3D F5906CC6 CC5B07DB BFE660BA 12DD3FBE 9A4184AD CA85F603 
+  67E6B3AD BF4F73D7 8FE599BC 87D544E0 DC347A73 985A754A D3EB5F72 E071B858 
+  13DFE466 000D041A FE92BE83 13C991
+  	quit
+!
+spanning-tree mode rapid-pvst
+spanning-tree portfast edge default
+spanning-tree extend system-id
+spanning-tree vlan 1-4094 priority 61440
+!
+vlan internal allocation policy ascending
+!
+vlan 10
+ name PROD
+!
+vlan 100
+ name Edge10
+!
+vlan 210
+ name Storage
+!
+vlan 249
+ name DMZ
+!
+vlan 250
+ name Users
+!
+vlan 252
+ name Servers
+!
+vlan 1901
+ name VHI-CORP
+!
+vlan 1902
+ name KRO-CORP
+!
+vlan 1990
+ name Guest-Wifi
+!
+vlan 1991
+ name VIP-Wifi
+!
+vlan 1992
+ name BoardRm-Wifi
+!
+vlan 1993
+ name Gadget-Wifi
+!
+vlan 3100
+ name VHI_Meraki
+!
+vlan 3200
+ name KRO_Meraki
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ switchport access vlan 250
+ switchport mode access
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/2
+ switchport access vlan 250
+ switchport mode access
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/3
+ description AP
+ switchport trunk native vlan 252
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/4
+!
+interface GigabitEthernet1/0/5
+ description VHI
+ switchport trunk native vlan 3100
+ switchport mode trunk
+ power inline static
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/6
+ description VHI
+ switchport trunk native vlan 3100
+ switchport mode trunk
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/7
+ description VHI
+ switchport trunk native vlan 3100
+ switchport mode trunk
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/8
+ description VHI
+ switchport trunk native vlan 3100
+ switchport mode trunk
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/9
+ description UPlink
+ switchport trunk native vlan 250
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/10
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan250
+ ip address 10.0.250.4 255.255.255.0
+!
+ip default-gateway 10.0.250.1
+ip http server
+ip http secure-server
+!
+!
+!
+!
+line con 0
+ privilege level 15
+ login local
+line vty 0 4
+ privilege level 15
+ login local
+ transport input ssh
+line vty 5 15
+ privilege level 15
+ login local
+ transport input ssh
+!
+end

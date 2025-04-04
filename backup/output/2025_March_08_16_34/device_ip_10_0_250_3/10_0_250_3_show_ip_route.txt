@@ -1,0 +1,7 @@
+Timestamp: 2025-03-08 16:34:06
+Command: show ip route
+Output:
+Default gateway is 10.0.250.1
+
+Host               Gateway           Last Use    Total Uses  Interface
+ICMP redirect cache is empty
